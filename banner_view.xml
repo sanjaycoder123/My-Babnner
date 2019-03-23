@@ -1,0 +1,129 @@
+<odoo>
+    <menuitem name="Banner"
+            id="menu_banner"
+            sequence="1"/>
+
+    <menuitem
+        id="submenu_banner"
+        parent="menu_banner"
+        sequence="1"
+        name="Banner Details"/>
+
+    <record id="custom_my_banner" model="ir.ui.view">
+        <field name="name">custom.my.banner</field>
+        <field name="model">banner.image</field>
+        <field name='arch' type="xml">
+            <form name="My Banner Image">
+                <header>
+					<button name="action_confirm" string="Published" type="object" class="oe_highlight" attrs="{'invisible': [('state','!=','draft')]}"/>
+    				<button name="action_validate" string="Archived" type="object" attrs="{'invisible': [('state', '!=', 'published')]}"/>
+    				<button name="action_reset" string="Draft" type="object" attrs="{'invisible': [('state','=','draft')]}"/>
+					<field name="state" widget="statusbar"/>
+				</header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+
+                    <field name="image" class="or_avatar" widget="image"/>
+
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                    		<field name="title" />
+                    		<field name="sequence" />
+                    	</group>
+                    	<group>
+                    		<field name="link" />
+                    		<field name="tags" widget="many2many_tags"/>
+                    	</group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="custom_my_banner_tree" model="ir.ui.view">
+        <field name="name">custom.my.banner.tree</field>
+        <field name="model">banner.image</field>
+        <field name='arch' type="xml">
+            <tree name="Banner Tree">
+                <field name="sequence" widget="handel"/>
+                <field name="name"/>
+                <field name="title"/>
+                <field name="link"/>
+                <field name="tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="custom_banner_image_kanban" model="ir.ui.view">
+        <field name="name">custom.banner.kanban.view</field>
+        <field name="model">banner.image</field>
+        <field name="type">kanban</field>
+        <field name="arch" type="xml">
+            <kanban string="NMT Banner" class="oe_background_grey o_kanban_dashboard o_project_kanban">
+                <field name="name"/>
+                <field name="title"/>
+                <field name="image"/>
+                <field name="color"/>
+                <field name="tag_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
+                            <div class="o_project_kanban_main">
+                                <div class="o_kanban_card_content o_visible">
+                                    <div class="o_kanban_primary_left">
+                                        <div class="o_kanban_image">
+                                            <t t-if="record.image.raw_value">
+                                                <img t-att-src="kanban_image('banner.image', 'image', record.id.value)"/>
+                                            </t>
+                                        </div>
+                                        <div class="o_primary">
+                                            <span><b><t t-esc="record.title.value"/></b></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="o_project_kanban_boxes">
+                                <div class="o_project_kanban_box">
+                                    <span class="o_value"><t t-esc="record.tag_count.value"/></span>
+                                    <span class="o_label"><b>Tags</b></span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+
+
+    </record>
+
+    <record id="action_nmt_banner_form" model="ir.actions.act_window">
+        <field name="name">MY Banner</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">banner.image</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to insert details.
+            </p><p>
+                for example
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+           action="action_nmt_banner_form"
+           id="sub_submenu_banner"
+           parent="submenu_banner"
+           sequence="1"/>
+</odoo>
